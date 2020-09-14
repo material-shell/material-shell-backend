@@ -34,4 +34,4 @@ app.use(require("./api.js").routes());
 /* 
 http.createServer(app.callback()).listen(3000);*/
 //https.createServer(app.callback()).listen(8080);
-app.listen(3000);
+app.listen(process.env.PORT || 80);
