@@ -2,7 +2,7 @@ const Router = require("koa-router");
 const router = new Router();
 
 router.get("/", (ctx, next) => {
-  ctx.body = "Hello conno";
+  ctx.body = JSON.stringify(ctx.headers["x-forwarded-for"] || ctx.ip);
   next();
 });
 

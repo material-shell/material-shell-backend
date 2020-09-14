@@ -1,5 +1,7 @@
+const http = require("http");
+const https = require("https");
 const Koa = require("koa");
-const app = new Koa();
+const app = new Koa({ proxy: false });
 const koaBody = require("koa-body");
 
 // Set up body parsing middleware
@@ -12,11 +14,14 @@ initDB();
 const User = require("./models/user");
 
 app.use(async (ctx, next) => {
-  ctx.user = await User.findOne({ ip: ctx.ip });
-  console.log(ctx.user, ctx.request.ip);
+  const ipAddress =
+    (ctx.headers["x-forwarded-for"] &&
+      ctx.headers["x-forwarded-for"].split(",")[0]) ||
+    ctx.ip;
+  ctx.user = await User.findOne({ ip: ipAddress });
   if (!ctx.user) {
     ctx.user = new User({
-      ip: ctx.ip,
+      ip: ipAddress,
     });
   }
   await next();
@@ -26,5 +31,7 @@ app.use(async (ctx, next) => {
 
 // Use the Router on the sub route /books
 app.use(require("./api.js").routes());
-
+/* 
+http.createServer(app.callback()).listen(3000);*/
+//https.createServer(app.callback()).listen(8080);
 app.listen(3000);
