@@ -3,6 +3,8 @@ const https = require("https");
 const Koa = require("koa");
 const app = new Koa({ proxy: false });
 const koaBody = require("koa-body");
+const cors = require("@koa/cors");
+app.use(cors());
 
 // Set up body parsing middleware
 app.use(koaBody());
