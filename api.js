@@ -1,8 +1,30 @@
 const Router = require("koa-router");
 const router = new Router();
+const User = require("./models/user");
 
-router.get("/", (ctx, next) => {
-  ctx.body = JSON.stringify(ctx.user.ip);
+router.get("/", async (ctx, next) => {
+  const todayWebsiteVisits = await User.countDocuments({
+    websiteAccess: { $gte: new Date().setHours(0, 0, 0, 0) },
+  });
+  const allWebsiteVisits = await User.countDocuments({
+    websiteAccess: { $exists: true },
+  });
+  const todayShellVisits = await User.countDocuments({
+    shellAccess: { $gte: new Date().setHours(0, 0, 0, 0) },
+  });
+  const allShellVisits = await User.countDocuments({
+    shellAccess: { $exists: true },
+  });
+  ctx.body = JSON.stringify({
+    website: {
+      today: todayWebsiteVisits,
+      allTime: allWebsiteVisits,
+    },
+    shell: {
+      today: todayShellVisits,
+      allTime: allShellVisits,
+    },
+  });
   next();
 });
 

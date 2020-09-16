@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
+    "dev": "nodemon -r dotenv/config index.js",
     "start": "node index.js",
     "zip": "zip -r deploy_package.zip ./"
   },
@@ -19,6 +19,7 @@
     "mongoose": "^5.10.5"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
     "nodemon": "^2.0.4"
   }
 }
