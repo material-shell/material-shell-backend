@@ -4,26 +4,39 @@ const User = require("./models/user");
 const Notification = require("./models/notification");
 
 router.get("/", async (ctx, next) => {
-  const todayWebsiteVisits = await User.countDocuments({
-    websiteAccess: { $gte: new Date().setHours(0, 0, 0, 0) },
-  });
-  const allWebsiteVisits = await User.countDocuments({
-    websiteAccess: { $exists: true },
-  });
-  const todayShellVisits = await User.countDocuments({
-    shellAccess: { $gte: new Date().setHours(0, 0, 0, 0) },
-  });
-  const allShellVisits = await User.countDocuments({
-    shellAccess: { $exists: true },
-  });
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yesterday = new Date(today.getTime()).setDate(today.getDate() - 1);
+  const twoDaysAgo = new Date(today.getTime()).setDate(today.getDate() - 2);
+
   ctx.body = JSON.stringify({
     website: {
-      today: todayWebsiteVisits,
-      allTime: allWebsiteVisits,
+      twoDaysAgo: await User.countDocuments({
+        websiteAccess: { $gte: twoDaysAgo, $lt: yesterday },
+      }),
+      yesterday: await User.countDocuments({
+        websiteAccess: { $gte: yesterday, $lt: today },
+      }),
+      today: await User.countDocuments({
+        websiteAccess: { $gte: today },
+      }),
+      allTime: await User.countDocuments({
+        websiteAccess: { $exists: true },
+      }),
     },
     shell: {
-      today: todayShellVisits,
-      allTime: allShellVisits,
+      twoDaysAgo: await User.countDocuments({
+        shellAccess: { $gte: twoDaysAgo, $lt: yesterday },
+      }),
+      yesterday: await User.countDocuments({
+        shellAccess: { $gte: yesterday, $lt: today },
+      }),
+      today: await User.countDocuments({
+        shellAccess: { $gte: today },
+      }),
+      allTime: await User.countDocuments({
+        shellAccess: { $exists: true },
+      }),
     },
   });
   next();
