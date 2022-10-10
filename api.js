@@ -2,14 +2,16 @@ const Router = require("koa-router");
 const router = new Router();
 const User = require("./models/user");
 const Notification = require("./models/notification");
+const DailyRecord = require("./models/dailyRecord");
 
 router.get("/", async (ctx, next) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const yesterday = new Date(today.getTime()).setDate(today.getDate() - 1);
   const twoDaysAgo = new Date(today.getTime()).setDate(today.getDate() - 2);
+  const tenDaysAgo = new Date(today.getTime()).setDate(today.getDate() - 10);
 
-  ctx.body = JSON.stringify({
+  /* ctx.body = JSON.stringify({
     website: {
       twoDaysAgo: await User.countDocuments({
         websiteAccess: { $gte: twoDaysAgo, $lt: yesterday },
@@ -25,6 +27,9 @@ router.get("/", async (ctx, next) => {
       }),
     },
     shell: {
+      tenDaysAgo: await User.countDocuments({
+        shellAccess: { $gte: tenDaysAgo, $lt: twoDaysAgo },
+      }),
       twoDaysAgo: await User.countDocuments({
         shellAccess: { $gte: twoDaysAgo, $lt: yesterday },
       }),
@@ -38,7 +43,30 @@ router.get("/", async (ctx, next) => {
         shellAccess: { $exists: true },
       }),
     },
+  }); */
+  const lastTenDaysRecord = await DailyRecord.find({
+    date: { $gte: tenDaysAgo },
   });
+  console.log(lastTenDaysRecord);
+  ctx.type = "html";
+  ctx.body = `
+  <html>
+    <body>
+    <strong>Last 10 days</strong>
+    <table>
+      ${lastTenDaysRecord.reduce(
+        (updated, latest) =>
+          updated.concat(
+            `<tr><td>${new Date(latest.date).toLocaleDateString()}</td><td>${
+              latest.count
+            }</td></tr>`
+          ),
+        ""
+      )}
+      </table>
+    </body>
+  </html>
+  `;
   next();
 });
 

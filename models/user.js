@@ -8,9 +8,13 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
   ip: String,
+  uuid: String,
   githubAccess: Date,
   websiteAccess: Date,
   shellAccess: Date,
+  gnomeVersion: Number,
+  version: Number,
+  commit: String,
 });
 
 module.exports = mongoose.model("User", UserSchema);

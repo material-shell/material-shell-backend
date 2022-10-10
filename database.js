@@ -11,6 +11,7 @@ const initDB = () => {
 
   mongoose.connection.once("open", () => {
     console.log("connected to database");
+    
   });
 };
 
