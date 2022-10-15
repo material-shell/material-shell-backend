@@ -12,8 +12,8 @@ const UserSchema = new Schema({
   githubAccess: Date,
   websiteAccess: Date,
   shellAccess: Date,
-  gnomeVersion: Number,
-  version: Number,
+  gnomeVersion: String,
+  version: String,
   commit: String,
 });
 
