@@ -19,7 +19,6 @@ const DailyRecord = require("./models/dailyRecord");
 const MonthlyRecord = require("./models/monthlyRecord");
 
 app.use(async (ctx, next) => {
-  console.log(ctx.query);
   const uuid = ctx.query.uuid;
   const ipAddress =
     (ctx.headers["x-forwarded-for"] &&
@@ -50,15 +49,12 @@ app.use(async (ctx, next) => {
     ctx.user.commit = ctx.query.commit;
   }
   await next();
-  console.log(ctx.user);
   ctx.user.save();
 });
 
 // Use the Router on the sub route /books
 app.use(require("./api.js").routes());
-/* 
-http.createServer(app.callback()).listen(3000);*/
-//https.createServer(app.callback()).listen(8080);
+
 app.listen(process.env.PORT || 80);
 
 cron.job(
